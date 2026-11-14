@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Junior Astronaut Mission Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1526;--card:#18223b;--line:#2c3a5e;--ink:#eef1f8;--mute:#a4b0cf;--org:#ff8a3d;--teal:#3fd2c0;--grn:#8bd45a;--red:#ff5d6c;--yel:#ffd166;--onorg:#1a0f05;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eef2fb;--card:#fff;--line:#c9d3ea;--ink:#14203d;--mute:#4d5b7e;--org:#d4560f;--teal:#0b8f80;--grn:#3f8a14;--red:#c9283a;--yel:#a8720a;--onorg:#fff;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0e1526;--card:#18223b;--line:#2c3a5e;--ink:#eef1f8;--mute:#a4b0cf}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Nunito,system-ui,sans-serif}
+main{max-width:880px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:Fredoka,system-ui,sans-serif;margin:.2em 0}
+h1{font-size:clamp(28px,6vw,44px);line-height:1.1}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px;margin:12px 0}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.big{background:var(--org);color:var(--onorg);border:0;border-radius:999px;padding:12px 26px;font:700 18px Fredoka,sans-serif}
+.big:disabled{opacity:.45;cursor:not-allowed}
+.sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.site{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px}
+.site:hover{border-color:var(--org)}
+.site b{font:700 22px Fredoka}
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.m{font-size:14px}.m .t{display:flex;justify-content:space-between;font-weight:700}
+.bar{height:14px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;border-radius:9px;transition:width .5s}
+.sub{color:var(--mute);font-size:13px}
+.act{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.act:first-of-type{border-top:0}
+.act b{font-family:Fredoka;font-size:18px}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:transparent;font-size:22px;line-height:1}
+.step button:hover:not(:disabled){border-color:var(--org)}.step button:disabled{opacity:.35}
+.step span{min-width:20px;text-align:center;font:700 20px Fredoka}
+.alert{border-left:6px solid var(--yel);background:var(--card);padding:10px 14px;border-radius:10px;margin:8px 0}
+.alert.bad{border-color:var(--red)}
+.pips{display:flex;gap:6px}.pip{width:22px;height:22px;border-radius:50%;border:2px solid var(--org)}.pip.on{background:var(--org)}
+.log p{margin:6px 0;font-size:14px}.log{max-height:240px;overflow:auto}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lv{font-size:13px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body><main id="app"></main>
+<script>
+const SITES={
+moon:{n:"Moon: Shackleton Rim",ic:"🌙",rad:6,flare:14,info:"No air to block radiation. Nights last about 2 weeks in real life, so we squeeze them into short, sneaky blackouts. Batteries matter!",sun:s=>(s%10>=6)?0.1:1,flares:3,storms:0},
+mars:{n:"Mars: Jezero Basin",ic:"🔴",rad:4,flare:10,info:"Thin air blocks a little radiation, but sunlight is weak and dust storms can hide the Sun for days.",sun:s=>0.6,flares:2,storms:2}};
+const ACT=[
+["solar","☀️","Build solar panels","More power. Everything else needs power."],
+["o2","💨","Upgrade oxygen plant","Splits water into breathable oxygen. Uses power."],
+["farm","🌱","Grow the greenhouse","Makes food. Grow lights use a lot of power."],
+["shield","🛡️","Pile on regolith shielding","Moon or Mars dirt stacked on the roof blocks radiation."],
+["sci","🔬","Do science","Earns mission points. Does not keep anyone alive!"],
+["rest","😴","Rest and recover","Heals the crew a little."]];
+const NAMES={solar:"solar panels",o2:"oxygen plant",farm:"greenhouse"};
+let G,P,app=document.getElementById("app");
+const r=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
+const cl=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
+function intro(){app.innerHTML=`<h1>Junior Astronaut Mission Trainer</h1>
+<p>You are Mission Commander. Keep <b>4 crew</b> alive for <b>30 sols</b> (days). Every sol you get <b>4 crew-hours</b> to spend. Power runs the oxygen plant and greenhouse, shielding protects against radiation, and science earns your score. You can’t do everything, so choose wisely!</p>
+<h2>Pick your outpost</h2><div class="sites">${Object.entries(SITES).map(([k,s])=>`<button class="site" data-k="${k}"><b>${s.ic} ${s.n}</b><p>${s.info}</p></button>`).join("")}</div>`;
+app.querySelectorAll(".site").forEach(b=>b.onclick=()=>start(b.dataset.k))}
+function start(k){const S=SITES[k],ev={};
+const put=(s,t)=>{ev[s]=ev[s]||[];ev[s].push(t)};
+for(let i=0;i<S.flares;i++)put(r(4,27),"flare");
+for(let i=0;i<S.storms;i++){const s=r(5,24);for(let j=0;j<3;j++)put(s+j,"storm")}
+for(let i=0;i<2;i++)put(r(6,28),"meteor");
+G={k,S,ev,sol:1,lv:{solar:3,o2:1,farm:1,shield:1},bat:60,o2:40,food:40,hp:100,sci:0,log:[],last:null};
+P={solar:0,o2:0,farm:0,shield:0,sci:0,rest:0};render()}
+const used=()=>Object.values(P).reduce((a,b)=>a+b,0);
+function meter(l,v,c,note){return `<div class="m"><div class="t"><span>${l}</span><span>${Math.round(v)}</span></div><div class="bar"><i style="width:${cl(v)}%;background:${v<25?"var(--red)":c}"></i></div><div class="sub">${note||""}</div></div>`}
+function sunNow(){let s=G.S.sun(G.sol);if((G.ev[G.sol]||[]).includes("storm"))s=Math.min(s,.2);return s}
+function render(){const g=G,sun=sunNow(),gen=g.lv.solar*4*sun,dem=4+g.lv.o2*1.5+g.lv.farm*2;
+const now=g.ev[g.sol]||[],nxt=g.ev[g.sol+1]||[];
+const msg=t=>({flare:"☢️ Solar flare",storm:"🌪️ Dust storm",meteor:"☄️ Micrometeoroid shower"}[t]);
+let al="";
+if(now.includes("flare"))al+=`<div class="alert bad">☢️ A solar flare hits at the end of this sol. Shielding decides how much radiation gets in.</div>`;
+if(now.includes("storm"))al+=`<div class="alert">🌪️ Dust storm: solar panels make only a fifth of their power today.</div>`;
+if(nxt.includes("flare"))al+=`<div class="alert">📡 Mission Control: solar flare expected next sol.</div>`;
+if(nxt.includes("storm")&&!now.includes("storm"))al+=`<div class="alert">📡 Mission Control: dust storm expected next sol.</div>`;
+if(sun<.5&&!now.includes("storm")&&g.k==="moon")al+=`<div class="alert">🌑 Lunar night: panels make almost no power. The battery must carry you.</div>`;
+const left=4-used();
+app.innerHTML=`<div class="top"><h2>${g.S.ic} Sol ${g.sol} of 30</h2><div class="pips" aria-label="${left} crew-hours left">${[0,1,2,3].map(i=>`<span class="pip ${i<left?"on":""}"></span>`).join("")}</div></div>
+${al}
+<div class="card"><div class="meters">
+${meter("🔋 Battery",g.bat,"var(--yel)",`Making ${gen.toFixed(1)} · using ${dem.toFixed(1)} per sol`)}
+${meter("💨 Oxygen",g.o2,"var(--teal)",`Plant makes ${g.lv.o2*3}, crew breathes 4`)}
+${meter("🍲 Food",g.food,"var(--grn)",`Greenhouse makes ${g.lv.farm*3}, crew eats 4`)}
+${meter("❤️ Crew health",g.hp,"var(--org)",`Radiation per sol: about ${Math.max(0,g.S.rad-g.lv.shield*1.2).toFixed(1)}`)}
+</div><p class="sub">🔬 Science points: <b>${g.sci}</b> · Sunlight today: ${Math.round(sun*100)}%</p></div>
+<div class="card"><h3>Plan your sol (4 crew-hours)</h3>
+${ACT.map(([k,ic,n,d])=>`<div class="act"><div><b>${ic} ${n}</b> ${g.lv[k]?`<span class="lv">Level ${g.lv[k]}${P[k]?` → ${g.lv[k]+P[k]}`:""}</span>`:""}<div class="sub">${d}</div></div><div class="step"><button data-k="${k}" data-d="-1" aria-label="Less ${n}" ${P[k]?"":"disabled"}>−</button><span>${P[k]}</span><button data-k="${k}" data-d="1" aria-label="More ${n}" ${left&&(!g.lv[k]||g.lv[k]+P[k]<8)?"":"disabled"}>+</button></div></div>`).join("")}
+<p style="text-align:center"><button class="big" id="go" ${left?"disabled":""}>${left?`Spend ${left} more crew-hour${left>1?"s":""}`:"End sol"}</button></p></div>
+<div class="card log"><h3>Mission log</h3>${g.log.length?g.log.map(l=>`<p>${l}</p>`).join(""):'<p class="sub">Your first sol is waiting. Tip: the oxygen plant and greenhouse start too small for 4 crew.</p>'}</div>`;
+app.querySelectorAll(".step button").forEach(b=>b.onclick=()=>{const k=b.dataset.k;P[k]+=+b.dataset.d;render()});
+document.getElementById("go").onclick=endSol}
+function endSol(){const g=G,L=[],now=g.ev[g.sol]||[];
+for(const k of["solar","o2","farm","shield"])g.lv[k]=Math.min(8,g.lv[k]+P[k]);
+g.sci+=P.sci*10;g.hp=cl(g.hp+P.rest*4);
+const sun=sunNow(),gen=g.lv.solar*4*sun,dem=4+g.lv.o2*1.5+g.lv.farm*2,avail=g.bat+gen;let ratio=1;
+if(avail>=dem){g.bat=Math.min(100,avail-dem)}else{ratio=avail/dem;g.bat=0;L.push(`⚡ <b>Brownout!</b> Power ran short, so the oxygen plant and greenhouse ran at ${Math.round(ratio*100)}%.`)}
+g.o2=cl(g.o2+g.lv.o2*3*ratio-4);g.food=cl(g.food+g.lv.farm*3*ratio-4);
+let dose=Math.max(0,g.S.rad-g.lv.shield*1.2);
+if(now.includes("flare")){const f=Math.max(0,g.S.flare-g.lv.shield*2.2);dose+=f;L.push(f>0?`☢️ Solar flare! Shielding stopped some of it, but the crew still absorbed extra radiation.`:`☢️ Solar flare! Your thick shielding blocked it completely.`)}
+if(now.includes("meteor")){const k=["solar","o2","farm"][r(0,2)];if(g.lv[k]>1){g.lv[k]--;L.push(`☄️ Micrometeoroids damaged the ${NAMES[k]}. It dropped to level ${g.lv[k]}.`)}else L.push(`☄️ Micrometeoroids pinged the roof but did no harm.`)}
+let loss=dose*.6;
+if(g.o2<=0){loss+=25;L.push("🚨 The crew ran out of oxygen!")}
+if(g.food<=0){loss+=12;L.push("🚨 The crew is starving!")}
+else if(loss===0&&!P.rest)g.hp=cl(g.hp+1);
+g.hp=cl(g.hp-loss);
+L.unshift(`Sol ${g.sol}: power ${gen.toFixed(1)} in / ${dem.toFixed(1)} out, radiation ${dose.toFixed(1)}, health ${loss>0?"−"+loss.toFixed(1):"steady"}.`);
+if(g.o2<25&&g.o2>0)L.push("⚠️ Oxygen is low.");if(g.food<25&&g.food>0)L.push("⚠️ Food is low.");
+g.last={dose,ratio};g.log=[...L.reverse().reverse(),...g.log].slice(0,40);
+g.sol++;P={solar:0,o2:0,farm:0,shield:0,sci:0,rest:0};
+if(g.hp<=0)return end(false);if(g.sol>30)return end(true);render()}
+function end(ok){const g=G;const sc=Math.round(g.sci+g.hp*2+(g.o2+g.food)/2);
+const rank=!ok?"Rookie (try again!)":sc>420?"Mission Commander":sc>300?"Flight Engineer":"Astronaut Pilot";
+const cause=g.o2<=0?"Oxygen ran out. Life support needs power and a big enough plant for every crew member.":g.food<=0?"Food ran out. A greenhouse must grow as much as the crew eats, and its lights need power.":"Radiation wore the crew down. Thicker shielding cuts exposure every single sol.";
+app.innerHTML=`<h1>${ok?"🎉 Mission success!":"💥 Mission failed"}</h1>
+<div class="card"><h2>${ok?`All 4 crew made it through 30 sols.`:`The crew was lost on sol ${g.sol-1}.`}</h2>
+<p>Rank: <b>${rank}</b> · Score: <b>${sc}</b> (science ${g.sci}, health ${Math.round(g.hp)})</p>
+<h3>What engineers learn from this</h3>
+<p>${ok?"You balanced power, life support, and shielding. Real mission planners do the same, and they also add spare capacity for surprises like meteor hits.":cause}</p>
+<p class="sub">Everything is linked: more oxygen and food need more power; more power needs more panels or batteries; more building leaves less time for science. That’s called a trade-off.</p>
+<p><button class="big" id="again">Play again</button></p></div>
+<div class="card log"><h3>Final log</h3>${g.log.slice(0,12).map(l=>`<p>${l}</p>`).join("")}</div>`;
+document.getElementById("again").onclick=intro}
+intro();
+</script></body></html>
