@@ -1,4 +1,5 @@
-HELLO EVERYONE
+HELLO EVERYONE,
+Let me brief you on how the game works.
 
 The game is a loop. You plan a sol, press “End sol”, the game works out what happened, and the screen redraws.
 
