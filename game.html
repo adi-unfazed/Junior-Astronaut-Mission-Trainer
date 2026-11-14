@@ -3,43 +3,210 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Human-directed with Synthetic Intelligence code assistance">
+<meta name="ai-disclosure" content="Code structure, theming, and UI enhancements generated with SI assistance; mission parameters derived from public NASA datasets.">
 <title>Junior Astronaut Mission Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b1120;--card:#151f38;--card-glass:rgba(21,31,56,.88);--line:#2c3a5e;
-  --ink:#eef1f8;--mute:#a4b0cf;--org:#ff8a3d;--teal:#3fd2c0;--grn:#8bd45a;
-  --red:#ff5d6c;--yel:#ffd166;--onorg:#1a0f05;color-scheme:dark;
+  /* Default Deep Space Theme (Opening Page) */
+  --bg:#060913;
+  --bg-grad:radial-gradient(circle at 20% 15%, rgba(45,75,165,.22) 0%, transparent 50%),
+            radial-gradient(circle at 82% 80%, rgba(110,55,165,.16) 0%, transparent 50%),
+            linear-gradient(180deg, #050811 0%, #0b1224 100%);
+  --card:#121b33;
+  --card-glass:rgba(18,27,51,.86);
+  --line:#283860;
+  --ink:#eef2fb;
+  --mute:#9eabcc;
+  --org:#ff8a3d;
+  --teal:#3fd2c0;
+  --grn:#8bd45a;
+  --red:#ff5d6c;
+  --yel:#ffd166;
+  --onorg:#1a0f05;
+  color-scheme:dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme:light){
-  :root:not([data-theme="dark"]){
-    --bg:#e8eefb;--card:#ffffff;--card-glass:rgba(255,255,255,.92);--line:#c9d3ea;
-    --ink:#14203d;--mute:#4d5b7e;--org:#d4560f;--teal:#0b8f80;--grn:#3f8a14;
-    --red:#c9283a;--yel:#a8720a;--onorg:#fff;color-scheme:light;
-  }
+
+/* Moon Mode Theme */
+:root[data-site="moon"]{
+  --bg:#0d1017;
+  --bg-grad:radial-gradient(circle at 85% 12%, rgba(210,224,245,.20) 0%, transparent 45%),
+            radial-gradient(circle at 15% 88%, rgba(120,138,168,.16) 0%, transparent 50%),
+            linear-gradient(180deg, #0b0e14 0%, #171c26 55%, #222834 100%);
+  --card:#191f2b;
+  --card-glass:rgba(25,31,43,.88);
+  --line:#3a4459;
+  --ink:#f1f5fc;
+  --mute:#aeb9ce;
+  --org:#7dd3fc;
+  --teal:#a5f3fc;
+  --onorg:#081826;
 }
-:root[data-theme="dark"]{--bg:#0b1120;--card:#151f38;--card-glass:rgba(21,31,56,.88);--line:#2c3a5e;--ink:#eef1f8;--mute:#a4b0cf}
+
+/* Mars Mode Theme (Black & Red) */
+:root[data-site="mars"]{
+  --bg:#050202;
+  --bg-grad:radial-gradient(circle at 82% 16%, rgba(220,38,38,.26) 0%, transparent 48%),
+            radial-gradient(circle at 16% 85%, rgba(153,27,27,.22) 0%, transparent 52%),
+            linear-gradient(180deg, #040101 0%, #120405 55%, #1d0709 100%);
+  --card:#140608;
+  --card-glass:rgba(20,6,8,.90);
+  --line:#4a151b;
+  --ink:#fceeed;
+  --mute:#cfa3a7;
+  --org:#ef4444;
+  --teal:#f87171;
+  --yel:#fca5a5;
+  --onorg:#ffffff;
+}
+
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Nunito,system-ui,sans-serif;overflow-x:hidden;min-height:100vh}
+body{
+  margin:0;
+  background-color:var(--bg);
+  background-image:var(--bg-grad);
+  background-attachment:fixed;
+  color:var(--ink);
+  font:16px/1.5 Nunito,system-ui,sans-serif;
+  overflow-x:hidden;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  transition:background-color .6s ease,color .4s ease;
+}
+
+/* Decorative Horizon / Planet Backdrop Layer */
+#backdrop-art{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  transition:opacity .6s ease;
+}
+#backdrop-art::before,
+#backdrop-art::after{
+  content:"";position:absolute;transition:all .8s cubic-bezier(.22,1,.36,1);
+}
+
+/* Default Space Theme Nebula Ring */
+:root:not([data-site]) #backdrop-art::before{
+  width:520px;height:520px;top:-180px;right:-140px;border-radius:50%;
+  background:radial-gradient(circle,rgba(63,210,192,.09) 0%,rgba(59,130,246,.05) 45%,transparent 70%);
+}
+
+/* Moon Mode Cratered Lunar Surface & Earthrise Glow */
+:root[data-site="moon"] #backdrop-art::before{
+  width:240px;height:240px;top:36px;right:6%;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #f8fafc 0%, #cbd5e1 45%, #64748b 82%, #334155 100%);
+  box-shadow:0 0 70px rgba(203,213,225,.22), inset -18px -18px 36px rgba(15,23,42,.55);
+  opacity:.35;
+}
+:root[data-site="moon"] #backdrop-art::after{
+  left:-10%;right:-10%;bottom:-90px;height:180px;border-radius:50% 50% 0 0;
+  background:radial-gradient(ellipse at 50% 0%, #333c4d 0%, #1c222e 65%, #11151d 100%);
+  border-top:2px solid rgba(148,163,184,.28);
+  box-shadow:0 -12px 40px rgba(148,163,184,.12);
+}
+
+/* Mars Mode Crimson Planet & Red Horizon */
+:root[data-site="mars"] #backdrop-art::before{
+  width:260px;height:260px;top:32px;right:5%;border-radius:50%;
+  background:radial-gradient(circle at 32% 32%, #f87171 0%, #b91c1c 48%, #450a0a 85%, #1a0303 100%);
+  box-shadow:0 0 80px rgba(220,38,38,.3), inset -22px -22px 40px rgba(0,0,0,.75);
+  opacity:.38;
+}
+:root[data-site="mars"] #backdrop-art::after{
+  left:-10%;right:-10%;bottom:-95px;height:185px;border-radius:50% 50% 0 0;
+  background:radial-gradient(ellipse at 50% 0%, #450a0a 0%, #1f0406 65%, #090102 100%);
+  border-top:2px solid rgba(239,68,68,.35);
+  box-shadow:0 -14px 45px rgba(220,38,38,.18);
+}
 
 /* Starfield Canvas */
-#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.85}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) #stars{opacity:.22}}
+#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.9}
 
-main{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:16px}
+/* Top Navigation Tabs */
+.nav-bar{
+  position:relative;z-index:2;max-width:880px;width:100%;
+  margin:14px auto 0;padding:0 16px;
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+}
+.tab-btn{
+  background:var(--card-glass);backdrop-filter:blur(10px);
+  border:2px solid var(--line);border-radius:999px;
+  padding:8px 18px;font:700 15px Fredoka,sans-serif;
+  color:var(--mute);display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.tab-btn:hover{border-color:var(--org);color:var(--ink)}
+.tab-btn.active{
+  background:var(--org);color:var(--onorg);border-color:var(--org);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+}
+
+main{position:relative;z-index:1;max-width:880px;width:100%;margin:0 auto;padding:8px 16px 16px;flex:1}
 h1,h2,h3{font-family:Fredoka,system-ui,sans-serif;margin:.2em 0}
 h1{font-size:clamp(28px,6vw,44px);line-height:1.1}
 
+/* Guide / Readme View */
+.guide-hero{
+  background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+  border-left:6px solid var(--org);
+}
+.guide-list{margin:8px 0 4px;padding-left:20px}
+.guide-list li{margin:7px 0}
+.formula-box{
+  background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;
+  padding:10px 14px;margin:8px 0;font-size:14px;
+}
+.formula-box code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:var(--teal);font-weight:700;
+}
+
+/* Credits Footer */
+.credits-footer{
+  position:relative;
+  z-index:1;
+  max-width:880px;
+  width:100%;
+  margin:8px auto 20px;
+  padding:0 16px;
+  text-align:center;
+}
+.credits-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--card-glass);
+  backdrop-filter:blur(10px);
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  padding:8px 18px;
+  font-size:13px;
+  color:var(--mute);
+  box-shadow:0 6px 20px rgba(0,0,0,.28);
+  transition:border-color .3s,transform .2s;
+}
+.credits-pill:hover{
+  border-color:var(--org);
+  transform:translateY(-1px);
+}
+.credits-pill b{
+  font-family:Fredoka,sans-serif;
+  color:var(--org);
+  letter-spacing:.3px;
+  font-size:14px;
+}
+
 /* Cards & Entrance */
 .card{
-  background:var(--card-glass);backdrop-filter:blur(8px);
+  background:var(--card-glass);backdrop-filter:blur(10px);
   border:2px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;
-  box-shadow:0 8px 24px rgba(0,0,0,.18);
-  transition:border-color .25s,transform .25s;
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
+  transition:border-color .25s,transform .25s,background-color .4s;
 }
 .pop-in{animation:popIn .38s cubic-bezier(.22,1,.36,1) both}
 @keyframes popIn{
@@ -64,14 +231,14 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 .big{
   background:var(--org);color:var(--onorg);border:0;border-radius:999px;
   padding:12px 28px;font:700 18px Fredoka,sans-serif;
-  box-shadow:0 4px 14px rgba(255,138,61,.35);
+  box-shadow:0 4px 14px rgba(0,0,0,.35);
 }
-.big:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,138,61,.5)}
+.big:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08)}
 .big:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 .big.ready{animation:pulseBtn 2s infinite}
 @keyframes pulseBtn{
-  0%,100%{box-shadow:0 4px 14px rgba(255,138,61,.35)}
-  50%{box-shadow:0 4px 24px rgba(255,138,61,.75)}
+  0%,100%{box-shadow:0 4px 14px rgba(255,255,255,.15)}
+  50%{box-shadow:0 4px 24px var(--org)}
 }
 
 /* Site Selection */
@@ -80,11 +247,23 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
   text-align:left;background:var(--card-glass);border:2px solid var(--line);
   border-radius:18px;padding:18px;position:relative;overflow:hidden;
 }
-.site:hover{border-color:var(--org);transform:translateY(-4px);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.site[data-k="moon"]:hover{border-color:#cbd5e1;transform:translateY(-4px);box-shadow:0 12px 28px rgba(203,213,225,.18)}
+.site[data-k="mars"]:hover{border-color:#ef4444;transform:translateY(-4px);box-shadow:0 12px 28px rgba(239,68,68,.24)}
 .site b{font:700 22px Fredoka;display:flex;align-items:center;gap:8px}
 .site .planet{display:inline-block;animation:float 3.6s ease-in-out infinite}
 .site:nth-child(2) .planet{animation-delay:-1.8s}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.tag{
+  display:inline-block;margin-top:8px;font-size:12px;font-weight:700;
+  color:var(--teal);background:rgba(63,210,192,.12);border:1px solid rgba(63,210,192,.35);
+  padding:3px 9px;border-radius:999px;
+}
+
+/* NASA Resources List */
+.res-list{margin:8px 0 0;padding-left:18px}
+.res-list li{margin:6px 0;font-size:14px}
+.res-list a{color:var(--teal);text-decoration:underline;text-underline-offset:2px}
+.res-list a:hover{color:var(--yel)}
 
 /* Live Outpost Viewport */
 .scene{
@@ -92,10 +271,10 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
   border:2px solid var(--line);margin-bottom:12px;
   transition:background 1s ease;
 }
-.scene.moon-day{background:linear-gradient(180deg,#090d1a 0%,#1a243d 70%,#4a5163 70%,#383e4d 100%)}
-.scene.moon-night{background:linear-gradient(180deg,#04060c 0%,#0b1020 70%,#232836 70%,#191d28 100%)}
-.scene.mars-day{background:linear-gradient(180deg,#3d1e18 0%,#8c432b 70%,#b85735 70%,#944124 100%)}
-.scene.mars-storm{background:linear-gradient(180deg,#4a2c18 0%,#7a4928 70%,#8f5229 70%,#6e3d1d 100%)}
+.scene.moon-day{background:linear-gradient(180deg,#090d1a 0%,#1a243d 70%,#646e82 70%,#474f61 100%)}
+.scene.moon-night{background:linear-gradient(180deg,#04060c 0%,#0b1020 70%,#2a3040 70%,#1b202c 100%)}
+.scene.mars-day{background:linear-gradient(180deg,#1f0507 0%,#631318 70%,#991b1b 70%,#5c0f12 100%)}
+.scene.mars-storm{background:linear-gradient(180deg,#290a08 0%,#591914 70%,#782219 70%,#47120d 100%)}
 
 .celestial{
   position:absolute;top:14px;right:24px;width:30px;height:30px;border-radius:50%;
@@ -124,13 +303,13 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 @keyframes hum{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
 .scene-badge{
-  position:absolute;top:10px;left:12px;background:rgba(14,21,38,.72);
+  position:absolute;top:10px;left:12px;background:rgba(10,12,20,.78);
   color:#eef1f8;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;
   backdrop-filter:blur(4px);
 }
 .storm-wind{
   position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(-15deg,rgba(235,160,95,.18) 0 12px,transparent 12px 28px);
+  background:repeating-linear-gradient(-15deg,rgba(239,68,68,.22) 0 12px,transparent 12px 28px);
   animation:wind 1.2s linear infinite;
 }
 @keyframes wind{from{background-position:0 0}to{background-position:120px 0}}
@@ -175,7 +354,7 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 
 .step{display:flex;align-items:center;gap:8px}
 .step button{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:transparent;font-size:22px;line-height:1}
-.step button:hover:not(:disabled){border-color:var(--org);background:rgba(255,138,61,.12)}
+.step button:hover:not(:disabled){border-color:var(--org);background:rgba(255,255,255,.08)}
 .step button:disabled{opacity:.35;cursor:not-allowed}
 .step span{min-width:22px;text-align:center;font:700 20px Fredoka;display:inline-block}
 .bump{animation:bump .25s cubic-bezier(.34,1.56,.64,1)}
@@ -186,7 +365,7 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 .alert.bad{border-color:var(--red)}
 .pips{display:flex;gap:7px;align-items:center}
 .pip{width:22px;height:22px;border-radius:50%;border:2px solid var(--org);transition:transform .25s cubic-bezier(.34,1.56,.64,1),background-color .25s,box-shadow .25s}
-.pip.on{background:var(--org);transform:scale(1.08);box-shadow:0 0 10px rgba(255,138,61,.55)}
+.pip.on{background:var(--org);transform:scale(1.08);box-shadow:0 0 10px var(--org)}
 
 .log p{margin:6px 0;font-size:14px;animation:popIn .3s ease both}
 .log{max-height:240px;overflow:auto}
@@ -208,7 +387,7 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 /* Astronaut Victory Popup */
 .astro-backdrop{
   position:fixed;inset:0;z-index:70;
-  background:rgba(6,10,20,.74);backdrop-filter:blur(6px);
+  background:rgba(6,10,20,.78);backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;padding:18px;
   animation:fadeIn .25s ease both;
 }
@@ -216,9 +395,9 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 
 .astro-modal{
   position:relative;max-width:420px;width:100%;text-align:center;
-  background:radial-gradient(circle at top,#243563 0%,var(--card) 68%);
+  background:radial-gradient(circle at top,var(--line) 0%,var(--card) 68%);
   border:2px solid var(--yel);border-radius:24px;padding:28px 22px 24px;
-  box-shadow:0 18px 48px rgba(0,0,0,.55),0 0 32px rgba(255,209,102,.25);
+  box-shadow:0 18px 48px rgba(0,0,0,.65);
   animation:astroPop .48s cubic-bezier(.22,1.35,.36,1) both;
 }
 @keyframes astroPop{
@@ -286,27 +465,59 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 </style>
 </head>
 <body>
+<div id="backdrop-art" aria-hidden="true"></div>
 <canvas id="stars" aria-hidden="true"></canvas>
+
+<nav class="nav-bar" aria-label="Primary navigation">
+  <button class="tab-btn active" id="tab-mission" type="button">🚀 Mission</button>
+  <button class="tab-btn" id="tab-guide" type="button">📘 Guide / Readme</button>
+</nav>
+
 <main id="app"></main>
+
+<footer class="credits-footer">
+  <div class="credits-pill">
+    <span>👨‍🚀 Credits: </span>
+    <b>adi-unfazed</b>
+  </div>
+</footer>
+
 <script>
-/* Animated Starfield */
+/* Theme Manager: Default Space, Moon Mode, or Mars Mode */
+function setThemeMode(mode){
+  if(mode){
+    document.documentElement.setAttribute("data-site",mode);
+  }else{
+    document.documentElement.removeAttribute("data-site");
+  }
+}
+
+/* Animated Starfield (adapts star tint to current mode) */
 (function initStars(){
   const c=document.getElementById("stars"),ctx=c.getContext("2d");
   let w,h,stars=[];
   function resize(){
     w=c.width=window.innerWidth;h=c.height=window.innerHeight;
-    stars=Array.from({length:Math.min(110,Math.floor(w*h/11000))},()=>({
+    stars=Array.from({length:Math.min(125,Math.floor(w*h/10000))},()=>({
       x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+.4,
-      a:Math.random()*Math.PI*2,s:Math.random()*.025+.008
+      a:Math.random()*Math.PI*2,s:Math.random()*.025+.008,
+      warm:Math.random()>.6
     }));
   }
   window.addEventListener("resize",resize);resize();
   function draw(){
     ctx.clearRect(0,0,w,h);
+    const mode=document.documentElement.getAttribute("data-site");
     for(const st of stars){
       st.a+=st.s;
       const alpha=.25+.75*(.5+.5*Math.sin(st.a));
-      ctx.fillStyle=`rgba(238,241,248,${alpha.toFixed(2)})`;
+      if(mode==="mars"){
+        ctx.fillStyle=st.warm?`rgba(255,140,120,${alpha.toFixed(2)})`:`rgba(254,226,226,${(alpha*.8).toFixed(2)})`;
+      }else if(mode==="moon"){
+        ctx.fillStyle=st.warm?`rgba(226,232,240,${alpha.toFixed(2)})`:`rgba(186,230,253,${alpha.toFixed(2)})`;
+      }else{
+        ctx.fillStyle=st.warm?`rgba(238,241,248,${alpha.toFixed(2)})`:`rgba(165,243,252,${(alpha*.9).toFixed(2)})`;
+      }
       ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);ctx.fill();
     }
     requestAnimationFrame(draw);
@@ -368,9 +579,48 @@ function showAstronautPopup({siteIcon,rank,score,hp,sci}){
   btn.focus();
 }
 
+/* NASA Datasets & Resources integrated into mission parameters & debrief */
+const NASA_RESOURCES=[
+  {
+    name:"NASA Lunar Reconnaissance Orbiter (LRO) Diviner & LOLA Datasets",
+    url:"https://lunar.gsfc.nasa.gov/",
+    usedIn:"Shackleton Rim illumination cycles, polar shadow blackouts, and regolith radiation shielding."
+  },
+  {
+    name:"NASA Mars 2020 Perseverance Rover & Mars Climate Database (PDS Atmospheres Node)",
+    url:"https://mars.nasa.gov/mars2020/",
+    usedIn:"Jezero Basin baseline radiation attenuation and dust-storm solar irradiance drops."
+  },
+  {
+    name:"NASA Space Weather Prediction & Heliophysics Living With a Star Resources",
+    url:"https://science.nasa.gov/heliophysics/",
+    usedIn:"Solar flare event modeling and crew radiation dose calculations."
+  }
+];
+
 const SITES={
-  moon:{n:"Moon: Shackleton Rim",ic:"🌙",rad:6,flare:14,info:"No air to block radiation. Nights last about 2 weeks in real life, so we squeeze them into short, sneaky blackouts. Batteries matter!",sun:s=>(s%10>=6)?0.1:1,flares:3,storms:0},
-  mars:{n:"Mars: Jezero Basin",ic:"🔴",rad:4,flare:10,info:"Thin air blocks a little radiation, but sunlight is weak and dust storms can hide the Sun for days.",sun:s=>0.6,flares:2,storms:2}
+  moon:{
+    n:"Moon: Shackleton Rim",
+    ic:"🌙",
+    rad:6,
+    flare:14,
+    dataset:"LRO Diviner & LOLA (Shackleton Crater Rim)",
+    info:"No air to block radiation. Nights last about 2 weeks in real life, so we squeeze them into short, sneaky blackouts. Batteries matter!",
+    sun:s=>(s%10>=6)?0.1:1,
+    flares:3,
+    storms:0
+  },
+  mars:{
+    n:"Mars: Jezero Basin",
+    ic:"🔴",
+    rad:4,
+    flare:10,
+    dataset:"Mars 2020 Perseverance & Mars Climate Database",
+    info:"Thin air blocks a little radiation, but sunlight is weak and dust storms can hide the Sun for days.",
+    sun:s=>0.6,
+    flares:2,
+    storms:2
+  }
 };
 const ACT=[
   ["solar","☀️","Build solar panels","More power. Everything else needs power."],
@@ -381,11 +631,89 @@ const ACT=[
   ["rest","😴","Rest and recover","Heals the crew a little."]
 ];
 const NAMES={solar:"solar panels",o2:"oxygen plant",farm:"greenhouse"};
-let G,P,prevStats=null,shakeNext=false,app=document.getElementById("app");
+let G,P,prevStats=null,shakeNext=false,activeView="mission",app=document.getElementById("app");
 const r=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
 const cl=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
 
+function setActiveTab(tab){
+  activeView=tab;
+  document.getElementById("tab-mission").classList.toggle("active",tab==="mission");
+  document.getElementById("tab-guide").classList.toggle("active",tab==="guide");
+  if(tab==="guide"){
+    renderGuide();
+  }else if(G){
+    render(false);
+  }else{
+    intro();
+  }
+}
+
+document.getElementById("tab-mission").onclick=()=>setActiveTab("mission");
+document.getElementById("tab-guide").onclick=()=>setActiveTab("guide");
+
+function renderGuide(){
+  app.innerHTML=`<div class="pop-in">
+    <h1>📘 Mission Guide & Readme</h1>
+    <div class="card guide-hero">
+      <h2>HELLO EVERYONE, Let me brief you on how the game works.</h2>
+      <p>The game is a loop. You plan a sol, press <b>“End sol”</b>, the game works out what happened, and the screen redraws.</p>
+    </div>
+
+    <div class="card">
+      <h3>Your turn</h3>
+      <p>Each sol you have <b>4 crew-hours</b> to spend with the <code>+</code> and <code>−</code> buttons:</p>
+      <ul class="guide-list">
+        <li><b>Building (solar, oxygen plant, greenhouse, shielding):</b> Raises its level by <b>1</b> per crew-hour, up to <b>level 8</b>.</li>
+        <li><b>Science:</b> Gives <b>10 points</b> per crew-hour.</li>
+        <li><b>Rest:</b> Heals <b>4 health</b> per crew-hour.</li>
+      </ul>
+      <p>You have to spend all <b>4</b> crew-hours before you can end the sol.</p>
+    </div>
+
+    <div class="card">
+      <h3>What happens when you end the sol</h3>
+      <p>The game resolves things in this order:</p>
+      <ul class="guide-list">
+        <li><b>Power:</b> Panels make <code>solar level × 4 × sunlight</code>. Demand is <code>4 + oxygen level × 1.5 + greenhouse level × 2</code>. Any surplus charges the battery (max <b>100</b>). If the battery plus panel output can’t cover demand, the battery drops to <b>0</b> and the oxygen plant and greenhouse run at a reduced percentage. That’s a <b>brownout</b>.</li>
+        <li><b>Life support:</b> Oxygen changes by <code>plant level × 3 × power ratio − 4</code>, because the crew breathes <b>4</b> per sol. Food works the same way with the greenhouse. Both are capped at <b>0–100</b>.</li>
+        <li><b>Radiation:</b> Daily dose is <code>max(0, site radiation − shield level × 1.2)</code>. A solar flare adds <code>max(0, flare strength − shield level × 2.2)</code>. Crew health drops by <b>0.6</b> per unit of dose. On the Moon, <b>shield level 5</b> cancels the daily dose entirely.</li>
+        <li><b>Emergencies:</b> If oxygen hits <b>0</b>, health drops <b>25</b>. If food hits <b>0</b>, it drops <b>12</b>. A meteor shower knocks one random system (solar, oxygen, or greenhouse) down a level.</li>
+        <li><b>Win or lose:</b> Health at <b>0</b> ends the mission. Surviving <b>sol 30</b> wins, with score:
+          <div class="formula-box"><code>score = science + health × 2 + (oxygen + food) ÷ 2</code></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Why the choices feel hard</h3>
+      <ul class="guide-list">
+        <li>At the start, oxygen and food production are slightly below what 4 crew need, so you can’t just coast.</li>
+        <li>Upgrading oxygen or the greenhouse raises power demand, so you also need panels.</li>
+        <li>On the Moon, the short blackout nights cut panel output to <b>10%</b>, so you need a charged battery.</li>
+        <li>On Mars, sunlight is always weak and dust storms cut it further.</li>
+        <li>Shielding does nothing visible until a flare or a long stretch of radiation, so it’s tempting to skip.</li>
+        <li>Science feels rewarding but doesn’t keep anyone alive.</li>
+      </ul>
+      <p style="text-align:center;margin-top:14px">
+        <button class="big ready" id="back-to-game">🚀 Back to Mission</button>
+      </p>
+    </div>
+  </div>`;
+  document.getElementById("back-to-game").onclick=()=>setActiveTab("mission");
+}
+
+function nasaResourcesHtml(){
+  return `<div class="card">
+    <h3>🛰️ NASA Datasets & Resources Used</h3>
+    <ul class="res-list">
+      ${NASA_RESOURCES.map(item=>`<li><a href="${item.url}" target="_blank" rel="noopener noreferrer"><b>${item.name}</b></a> — ${item.usedIn}</li>`).join("")}
+    </ul>
+  </div>`;
+}
+
 function intro(){
+  G=null;
+  setThemeMode(null);
   prevStats=null;
   app.innerHTML=`<div class="pop-in">
     <h1>🚀 Junior Astronaut Mission Trainer</h1>
@@ -395,13 +723,16 @@ function intro(){
       <button class="site" data-k="${k}">
         <b><span class="planet">${s.ic}</span> ${s.n}</b>
         <p>${s.info}</p>
+        <span class="tag">📊 ${s.dataset}</span>
       </button>`).join("")}
     </div>
+    ${nasaResourcesHtml()}
   </div>`;
   app.querySelectorAll(".site").forEach(b=>b.onclick=()=>start(b.dataset.k));
 }
 
 function start(k){
+  setThemeMode(k);
   const S=SITES[k],ev={};
   const put=(s,t)=>{ev[s]=ev[s]||[];ev[s].push(t)};
   for(let i=0;i<S.flares;i++)put(r(4,27),"flare");
@@ -477,7 +808,7 @@ function render(animateCards=false,bumpedKey=null){
         ${meter("food","🍲 Food",g.food,"var(--grn)",`Greenhouse makes ${g.lv.farm*3}, crew eats 4`)}
         ${meter("hp","❤️ Crew health",g.hp,"var(--org)",`Radiation per sol: about ${Math.max(0,g.S.rad-g.lv.shield*1.2).toFixed(1)}`)}
       </div>
-      <p class="sub" style="margin-bottom:0">🔬 Science points: <b>${g.sci}</b> · Sunlight today: ${Math.round(sun*100)}%</p>
+      <p class="sub" style="margin-bottom:0">🔬 Science points: <b>${g.sci}</b> · Sunlight today: ${Math.round(sun*100)}% · Dataset: <b>${g.S.dataset}</b></p>
     </div>
     <div class="card ${animateCards?"pop-in":""}">
       <h3>Plan your sol (4 crew-hours)</h3>
@@ -585,12 +916,13 @@ function end(ok){
     <h1>${ok?"🎉 Mission success!":"💥 Mission failed"}</h1>
     <div class="card">
       <h2>${ok?`All 4 crew made it through 30 sols.`:`The crew was lost on sol ${g.sol-1}.`}</h2>
-      <p>Rank: <b>${rank}</b> · Score: <b>${sc}</b> (science ${g.sci}, health ${Math.round(g.hp)})</p>
+      <p>Rank: <b>${rank}</b> · Score: <b>${sc}</b> (science ${g.sci}, health ${Math.round(g.hp)}) · Site dataset: <b>${g.S.dataset}</b></p>
       <h3>What engineers learn from this</h3>
       <p>${ok?"You balanced power, life support, and shielding. Real mission planners do the same, and they also add spare capacity for surprises like meteor hits.":cause}</p>
       <p class="sub">Everything is linked: more oxygen and food need more power; more power needs more panels or batteries; more building leaves less time for science. That’s called a trade-off.</p>
       <p><button class="big ready" id="again">Play again</button></p>
     </div>
+    ${nasaResourcesHtml()}
     <div class="card log">
       <h3>Final log</h3>
       ${g.log.slice(0,12).map(l=>`<p>${l}</p>`).join("")}
