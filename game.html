@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="generator" content="Human-directed with Super Intelligence code assistance">
-<meta name="si-disclosure" content="Code structure, theming, and UI enhancements generated with SI assistance; mission parameters derived from public NASA datasets.">
+<meta name="generator" content="Human-directed with Super Intelligence (SI) assistance for code generation, UI styling, and interactive layout">
+<meta name="ai-disclosure" content="Developed by adi-unfazed with Super Intelligence (SI) assistance for code generation, UI styling, and interactive layout; mission parameters derived from public NASA datasets.">
 <title>Junior Astronaut Mission Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -157,13 +157,12 @@ h1{font-size:clamp(28px,6vw,44px);line-height:1.1}
 }
 .guide-list{margin:8px 0 4px;padding-left:20px}
 .guide-list li{margin:7px 0}
-.formula-box{
-  background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;
-  padding:10px 14px;margin:8px 0;font-size:14px;
-}
-.formula-box code{
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  color:var(--teal);font-weight:700;
+.guide-disclosure{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+  color:var(--mute);
+  font-size:14px;
 }
 
 /* Credits Footer */
@@ -653,47 +652,39 @@ document.getElementById("tab-guide").onclick=()=>setActiveTab("guide");
 
 function renderGuide(){
   app.innerHTML=`<div class="pop-in">
-    <h1>📘 Mission Guide & Readme</h1>
+    <h1>📘 Guide / Readme</h1>
     <div class="card guide-hero">
-      <h2>HELLO EVERYONE, Let me brief you on how the game works.</h2>
-      <p>The game is a loop. You plan a sol, press <b>“End sol”</b>, the game works out what happened, and the screen redraws.</p>
+      <p><b>HELLO EVERYONE,</b></p>
+      <p>Let me brief you on how the game works.</p>
+      <p>To run the game, open the <code>game.html</code> file using any web browser.</p>
+      <p>The game follows a daily cycle: players plan their activities, click <b>End sol</b>, and the simulation calculates the results before updating the screen.</p>
     </div>
 
     <div class="card">
       <h3>Your turn</h3>
-      <p>Each sol you have <b>4 crew-hours</b> to spend with the <code>+</code> and <code>−</code> buttons:</p>
-      <ul class="guide-list">
-        <li><b>Building (solar, oxygen plant, greenhouse, shielding):</b> Raises its level by <b>1</b> per crew-hour, up to <b>level 8</b>.</li>
-        <li><b>Science:</b> Gives <b>10 points</b> per crew-hour.</li>
-        <li><b>Rest:</b> Heals <b>4 health</b> per crew-hour.</li>
-      </ul>
-      <p>You have to spend all <b>4</b> crew-hours before you can end the sol.</p>
+      <p>Each sol, players have four crew-hours to allocate using the <code>+</code> and <code>−</code> buttons. They can upgrade solar panels, oxygen plants, greenhouses, and shielding (up to level 8), earn 10 science points per hour, or restore 4 health points per hour through rest. All four hours must be used before ending the sol.</p>
     </div>
 
     <div class="card">
       <h3>What happens when you end the sol</h3>
-      <p>The game resolves things in this order:</p>
-      <ul class="guide-list">
-        <li><b>Power:</b> Panels make <code>solar level × 4 × sunlight</code>. Demand is <code>4 + oxygen level × 1.5 + greenhouse level × 2</code>. Any surplus charges the battery (max <b>100</b>). If the battery plus panel output can’t cover demand, the battery drops to <b>0</b> and the oxygen plant and greenhouse run at a reduced percentage. That’s a <b>brownout</b>.</li>
-        <li><b>Life support:</b> Oxygen changes by <code>plant level × 3 × power ratio − 4</code>, because the crew breathes <b>4</b> per sol. Food works the same way with the greenhouse. Both are capped at <b>0–100</b>.</li>
-        <li><b>Radiation:</b> Daily dose is <code>max(0, site radiation − shield level × 1.2)</code>. A solar flare adds <code>max(0, flare strength − shield level × 2.2)</code>. Crew health drops by <b>0.6</b> per unit of dose. On the Moon, <b>shield level 5</b> cancels the daily dose entirely.</li>
-        <li><b>Emergencies:</b> If oxygen hits <b>0</b>, health drops <b>25</b>. If food hits <b>0</b>, it drops <b>12</b>. A meteor shower knocks one random system (solar, oxygen, or greenhouse) down a level.</li>
-        <li><b>Win or lose:</b> Health at <b>0</b> ends the mission. Surviving <b>sol 30</b> wins, with score:
-          <div class="formula-box"><code>score = science + health × 2 + (oxygen + food) ÷ 2</code></div>
-        </li>
-      </ul>
+      <ol class="guide-list">
+        <li><b>Power:</b> Solar panels generate electricity based on their level and available sunlight. Power is consumed by the habitat, and surplus energy charges the battery. Insufficient power causes a brownout.</li>
+        <li><b>Life Support:</b> Oxygen and food production are calculated against the crew's daily consumption. Both resources are limited to a maximum of 100.</li>
+        <li><b>Radiation:</b> Crew health decreases based on radiation exposure and solar flares. Shielding reduces the damage.</li>
+        <li><b>Emergencies:</b> Oxygen or food depletion causes health loss, while meteor showers can damage random systems.</li>
+        <li><b>Win or Lose:</b> If crew health reaches zero, the mission ends. Surviving all 30 sols results in victory and a final score based on science, health, oxygen, and food.</li>
+      </ol>
     </div>
 
     <div class="card">
       <h3>Why the choices feel hard</h3>
       <ul class="guide-list">
-        <li>At the start, oxygen and food production are slightly below what 4 crew need, so you can’t just coast.</li>
-        <li>Upgrading oxygen or the greenhouse raises power demand, so you also need panels.</li>
-        <li>On the Moon, the short blackout nights cut panel output to <b>10%</b>, so you need a charged battery.</li>
-        <li>On Mars, sunlight is always weak and dust storms cut it further.</li>
-        <li>Shielding does nothing visible until a flare or a long stretch of radiation, so it’s tempting to skip.</li>
-        <li>Science feels rewarding but doesn’t keep anyone alive.</li>
+        <li>Initial oxygen and food production are insufficient to sustain the crew.</li>
+        <li>Upgrading life-support systems increases power demand, making solar panels equally important.</li>
+        <li>Lunar nights reduce sunlight to 10%, while Martian dust storms further reduce already weak sunlight.</li>
+        <li>Shielding provides long-term protection, while science increases the score but does not directly contribute to survival.</li>
       </ul>
+      <p>The player must carefully balance resources, infrastructure, crew health, and scientific progress to complete the mission successfully.</p>
       <p style="text-align:center;margin-top:14px">
         <button class="big ready" id="back-to-game">🚀 Back to Mission</button>
       </p>
