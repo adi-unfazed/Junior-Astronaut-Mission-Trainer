@@ -1,6 +1,6 @@
 HELLO EVERYONE,
 Let me brief you on how the game works.
-
+To run the game, open the game.html file using any web browser.
 The game is a loop. You plan a sol, press “End sol”, the game works out what happened, and the screen redraws.
 
 Your turn
