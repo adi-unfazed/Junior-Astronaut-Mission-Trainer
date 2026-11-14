@@ -23,3 +23,5 @@ At the start, oxygen and food production are slightly below what 4 crew need, so
 Upgrading oxygen or the greenhouse raises power demand, so you also need panels.
 On the Moon, the short blackout nights cut panel output to 10%, so you need a charged battery. On Mars, sunlight is always weak and dust storms cut it further.
 Shielding does nothing visible until a flare or a long stretch of radiation, so it’s tempting to skip. Science feels rewarding but doesn’t keep anyone alive.
+
+Developed by adi-unfazed with Super Intelligence (SI) assistance for code generation, UI styling, and interactive layout.
