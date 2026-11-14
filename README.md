@@ -2,27 +2,24 @@ HELLO EVERYONE,
 
 Let me brief you on how the game works.
 To run the game, open the game.html file using any web browser.
-The game is a loop. You plan a sol, press “End sol”, the game works out what happened, and the screen redraws.
+
+The game follows a daily cycle: players plan their activities, click End sol, and the simulation calculates the results before updating the screen.
 
 Your turn
 
-Each sol you have 4 crew-hours to spend with the + and − buttons. Building something (solar, oxygen plant, greenhouse, shielding) raises its level by 1 per crew-hour, up to level 8. Science gives 10 points per crew-hour, and rest heals 4 health per crew-hour. You have to spend all 4 before you can end the sol.
+Each sol, players have four crew-hours to allocate using the + and − buttons. They can upgrade solar panels, oxygen plants, greenhouses, and shielding (up to level 8), earn 10 science points per hour, or restore 4 health points per hour through rest. All four hours must be used before ending the sol.
 
 What happens when you end the sol
-
-The game resolves things in this order:
-
-Power. Panels make solar level × 4 × sunlight. Demand is 4 + oxygen level × 1.5 + greenhouse level × 2. Any surplus charges the battery (max 100). If the battery plus panel output can’t cover demand, the battery drops to zero and the oxygen plant and greenhouse run at a reduced percentage. That’s a brownout.
-Life support. Oxygen changes by plant level × 3 × power ratio − 4, because the crew breathes 4 per sol. Food works the same way with the greenhouse. Both are capped at 0–100.
-Radiation. Daily dose is max(0, site radiation − shield level × 1.2). A solar flare adds max(0, flare strength − shield level × 2.2). Crew health drops by 0.6 per unit of dose. On the Moon, shield level 5 cancels the daily dose entirely.
-Emergencies. If oxygen hits 0, health drops 25. If food hits 0, it drops 12. A meteor shower knocks one random system (solar, oxygen, or greenhouse) down a level.
-Win or lose. Health at 0 ends the mission. Surviving sol 30 wins, with score science + health × 2 + (oxygen + food) ÷ 2.
-
+1. Power: Solar panels generate electricity based on their level and available sunlight. Power is consumed by the habitat, and surplus energy charges the battery. Insufficient power causes a brownout.
+2. Life Support: Oxygen and food production are calculated against the crew's daily consumption. Both resources are limited to a maximum of 100.
+3. Radiation: Crew health decreases based on radiation exposure and solar flares. Shielding reduces the damage.
+4. Emergencies: Oxygen or food depletion causes health loss, while meteor showers can damage random systems.
+5. Win or Lose: If crew health reaches zero, the mission ends. Surviving all 30 sols results in victory and a final score based on science, health, oxygen, and food.
+   
 Why the choices feel hard
-
-At the start, oxygen and food production are slightly below what 4 crew need, so you can’t just coast.
-Upgrading oxygen or the greenhouse raises power demand, so you also need panels.
-On the Moon, the short blackout nights cut panel output to 10%, so you need a charged battery. On Mars, sunlight is always weak and dust storms cut it further.
-Shielding does nothing visible until a flare or a long stretch of radiation, so it’s tempting to skip. Science feels rewarding but doesn’t keep anyone alive.
-
+- Initial oxygen and food production are insufficient to sustain the crew.
+- Upgrading life-support systems increases power demand, making solar panels equally important.
+- Lunar nights reduce sunlight to 10%, while Martian dust storms further reduce already weak sunlight.
+- Shielding provides long-term protection, while science increases the score but does not directly contribute to survival.
+The player must carefully balance resources, infrastructure, crew health, and scientific progress to complete the mission successfully.
 Developed by adi-unfazed with Super Intelligence (SI) assistance for code generation, UI styling, and interactive layout.
